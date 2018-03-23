@@ -1,0 +1,25 @@
+h1 {
+    text-align: center;
+    color: blue;
+}
+
+button {
+    margin-left: 25vw;
+}
+
+a:hover {
+
+    text-decoration: inherit;
+}
+
+.glyphicon-remove {
+    color: red;
+}
+
+.glyphicon-remove:hover {
+    color: #E70000;
+}
+
+.glyphicon {
+    left: 1.2vw;
+}
