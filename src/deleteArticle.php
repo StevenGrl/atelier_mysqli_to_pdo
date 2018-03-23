@@ -1,13 +1,24 @@
 <?php
 include 'connect.php';
-$bdd = mysqli_connect(SERVER, USER, PASS, DB);
+// Connection
+$pdo = new PDO(DSN, USER, PASS);
 
 $id = $_GET['idArticle'];
 
-$selectExist = mysqli_fetch_assoc(mysqli_query($bdd, "SELECT * FROM Article where id = $id;"));
+$sql = 'SELECT * FROM Article where id = :id;';
+
+$prep = $pdo->prepare($sql);
+
+$prep->bindValue(':id', $id, PDO::PARAM_INT);
+
+$selectExist = $prep->execute();
 
 if ($selectExist !== NULL) {
-    if (mysqli_query($bdd, "DELETE FROM Article where id= $id ")) {
+    $sqlDelete = 'DELETE FROM Article where id = :id;';
+    $prepDelete = $pdo->prepare($sqlDelete);
+    $prepDelete->bindValue(':id', $id, PDO::PARAM_INT);
+    $countDelete = $prepDelete->execute();
+    if ($countDelete > 0) {
         ?>
         <h1>Votre article a bien été supprimé ! :)</h1>
         <?php
