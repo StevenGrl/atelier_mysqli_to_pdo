@@ -1,20 +1,30 @@
 <?php
 include 'connect.php';
-$bdd = mysqli_connect(SERVER, USER, PASS, DB);
+// Connection
+$pdo = new PDO(DSN, USER, PASS);
 
 $id = $_POST['id'];
-$title = mysqli_real_escape_string($bdd, $_POST['titleArticle']);
-$contents = mysqli_real_escape_string($bdd, $_POST['contentsArticle']);
-$author = mysqli_real_escape_string($bdd, $_POST['authorArticle']);
+$title = $_POST['titleArticle'];
+$contents = $_POST['contentsArticle'];
+$author = $_POST['authorArticle'];
 
 echo 'id : ' . $id . '<br/>';
 echo 'titre : ' . $title . '<br/>';
-echo 'contenu : ' . $contents . '<br/>';
+echo 'contents : ' . $contents . '<br/>';
 echo 'auteur : ' . $author . '<br/>';
 
-$bool = mysqli_query($bdd, "UPDATE Article SET titre = '$title', contenu = '$contents', auteur = '$author' where id = $id;");
+$sql = "UPDATE Article SET titre = :title, auteur = :author, contenu = :contents where id = :id;)";
 
-if ($bool) {
+$prep = $pdo->prepare($sql);
+
+$prep->bindValue(':id', $id, PDO::PARAM_INT);
+$prep->bindValue(':title', $title, PDO::PARAM_INT);
+$prep->bindValue(':contents', $contents, PDO::PARAM_INT);
+$prep->bindValue(':author', $author, PDO::PARAM_INT);
+
+$count = $prep->execute();
+
+if ($count > 0) {
     ?>
     <h1>Votre article a bien été modifié ! :)</h1>
     <?php

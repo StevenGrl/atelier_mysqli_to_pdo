@@ -1,12 +1,15 @@
 <?php
 include 'connect.php';
-$bdd = mysqli_connect(SERVER, USER, PASS, DB);
+// Connection
+$pdo = new PDO(DSN, USER, PASS);
 
 $id = $_GET['idArticle'];
 
-$selectExist = mysqli_fetch_assoc(mysqli_query($bdd, "SELECT * FROM Article where id = $id;"));
+$selectArticle = 'SELECT * FROM Article where id = ' . $id . ';';
 
-$selectAllFromId = mysqli_query($bdd, "SELECT * from Article where id = $id;");
+$resultArticle = $pdo->query($selectArticle);
+
+$article = $resultArticle->fetch();
 
 ?>
 <!DOCTYPE html>
@@ -50,32 +53,28 @@ $selectAllFromId = mysqli_query($bdd, "SELECT * from Article where id = $id;");
 </header>
 <div class="container">
     <?php
-    if ($selectExist === NULL) {
+    if ($resultArticle === NULL) {
         ?>
         <h1>Cet article n'existe pas ! Try again</h1>
     <?php } ?>
     <form action="modifiedArticle.php" method="POST">
-        <?php
-        while ($donnees = mysqli_fetch_assoc($selectAllFromId)) {
-            ?>
-            <input type="hidden" name="id" value="<?= $donnees['id']; ?>">
-            <div class="form-group">
-                <label for="titleArticle">Titre de l'article</label>
-                <input type="text" name="titleArticle" class="form-control" id="titleArticle"
-                       value="<?= $donnees['titre']; ?>">
-            </div>
-            <div class="form-group">
-                <label for="contentsArticle">Contenu de l'article</label>
-                <textarea class="form-control" name="contentsArticle"
-                          id="contentsArticle"><?= $donnees['contenu']; ?></textarea>
-            </div>
-            <div class="form-group">
-                <label for="authorArticle">Nom de l'auteur de l'article</label>
-                <input type="text" name="authorArticle" class="form-control" id="authorArticle"
-                       value="<?= $donnees['auteur']; ?>">
-            </div>
-            <button type="submit" class="btn btn-default">Modifier l'article</button>
-        <?php } ?>
+        <input type="hidden" name="id" value="<?= $article['id']; ?>">
+        <div class="form-group">
+            <label for="titleArticle">Titre de l'article</label>
+            <input type="text" name="titleArticle" class="form-control" id="titleArticle"
+                   value="<?= $article['titre']; ?>">
+        </div>
+        <div class="form-group">
+            <label for="contentsArticle">Contenu de l'article</label>
+            <textarea class="form-control" name="contentsArticle"
+                      id="contentsArticle"><?= $article['contenu']; ?></textarea>
+        </div>
+        <div class="form-group">
+            <label for="authorArticle">Nom de l'auteur de l'article</label>
+            <input type="text" name="authorArticle" class="form-control" id="authorArticle"
+                   value="<?= $article['auteur']; ?>">
+        </div>
+        <button type="submit" class="btn btn-default">Modifier l'article</button>
     </form>
 </div>
 </body>
